@@ -28,5 +28,42 @@ vector< pair<string, string> > GetVotes() {
 
 int main(int argc, char* argv[]) {
   vector< pair<string, string> > votes = GetVotes();
-  // TODO: Determine who won the election.
+  unordered_map<string, int> results;
+  unordered_map<string, int> audit;
+
+
+  for (int i = 0; i < votes.size(); i++) {
+    pair<string, string> vote = votes.at(i);
+    string voter = vote.first;
+    string candidate = vote.second;
+    if(audit.find(candidate) == audit.end()) {
+      if(results.find(candidate) == results.end()) {
+        results[candidate] = 0;
+      }
+      results[candidate] += 1;
+      audit[voter] = 1;
+    }
+    else {
+      audit[voter] += 1;
+    }
+  }
+  vector<pair<string,int>> vectored_results;
+  for(pair<string, int> result : results) {
+      cout << result.first << " had " << result.second << " votes" << endl;
+      vectored_results.push_back(result);
+  }
+  pair<string, int> frontrunner = vectored_results.at(0);
+  for(int i = 0; i < vectored_results.size(); i++){
+    pair<string, int> candidate = vectored_results.at(i);
+      if(candidate.second > frontrunner.second) {
+        frontrunner = candidate;
+      }
+  }
+  cout << frontrunner.first << " won with "
+       << frontrunner.second << " votes." << endl;
+  for(pair<string, int> voter: audit) {
+    if(voter.second > 1){
+      cout << voter.first << " tried to vote " << voter.second-1 << " extra times" << endl;
+    }
+  }
 }
